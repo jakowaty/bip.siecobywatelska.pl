@@ -1,23 +1,46 @@
 {% extends 'base.html.twig' %}
 
 {% form_theme form _self %}
-    {% block _news_attachments_item_widget %}
-        <tr>
-            {% for column in prototype %}
-                <td>
-                    {{ form_widget(column) }}
-                </td>
-            {% endfor %}
-            
-            <td>
-                <a href="#" class="attachment-remove">X</a>
-            </td>
-        </tr>
-    {% endblock %}
+
+{% block _news_attachments_entry_file_widget %}
+    {% if data %}
+        {{ data }}
+    {% else %}
+        {{ block('form_widget') }}
+    {% endif %}
+{% endblock _news_attachments_entry_file_widget %}
+
+{% macro attachment_row(form) %}
+    <tr>
+        <td>
+            {{ form_label(form.name, null, {label_attr: {class: 'sr-only' }} ) }}
+            {{ form_widget(form.name) }}
+        </td>
+        <td>
+            {{ form_label(form.file, null, {label_attr: {class: 'sr-only' }} ) }}
+            {{ form_widget(form.file) }}
+        </td>
+        <td>
+            <a href="#" class="btn btn-xs btn-danger js-row-remove">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+                Remove
+            </a>
+        </td>
+    </tr>
+{% endmacro %}
+
+{% block _news_attachments_entry_row %}
+    {{ _self.attachment_row(form) }}
+{% endblock %}
+
+{% block _news_attachments_item_widget_prototype %}
+    {{ _self.attachment_row(prototype) }}
+{% endblock %}
+
 
     {% block _news_attachments_widget %}
         {% if prototype is defined %}
-            {% set attr = attr|merge({'data-prototype' : block('_news_attachments_item_widget')|trim}) %}
+            {% set attr = attr|merge({'data-prototype' : block('_news_attachments_item_widget_prototype')}) %}
         {% endif %}
         <table {{ block('widget_container_attributes') }}>
             <thead>
@@ -27,24 +50,17 @@
                 </th>
                 {% endfor %}
                 <th>
-                    <label class="col-sm-2 control-label" for="">Usuń</label>
-                </th>
-                <th>
-                    <a class="btn btn-default btn-add" id="add_attachment" title="Dodaj załącznik" href="#">
+                    <a class="btn btn-default btn-add btn-xs js-row-add" href="#">
                         <i class="fa fa-minus" aria-hidden="true"></i>
                         Dodaj Załącznik
                     </a>
                 </th>
             </thead>
             
-            <tbody id="appendable">
+            <tbody>
+                 {{ block('form_rows') }}
             </tbody>
         </table>
-        {% if form.vars.data %}
-            <script>
-                var json_attachments = '{{ form.vars.data|json_encode()|raw }}';
-            </script>
-        {% endif %}
     {% endblock %}
 
 
@@ -78,55 +94,28 @@
             integrity="sha256-L8glE3PzqSO1/nrEHYWoNyozn5i3ETucQoJGA7gp2mI="
             crossorigin="anonymous"></script>
     <script src="{{ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script>
-    {% if form.attachments is defined %}
-    <script type="x-newsmodule-template" id="_news_attachments_item_widget">
-        <tr>
-            <td>
-                <input type="text" id="news_attachments___name___name" name="news[attachments][__name__][name]" value="_|NAME|_" class="form-control" />
-            </td>
-            <td>
-                <input type="text" id="news_attachments___name___file" name="news[attachments][__name__][file]" value="_|FILE|_" />
-            </td>
 
-            <td>
-                <a href="#" class="attachment-remove">X</a>
-            </td>
-        </tr>
-    </script>
     <script>
-        $(document).ready(function(){
-            var attCount = '{{ form.attachments|length }}',
-            pattern = $("#news_attachments").attr("data-prototype"),
-            appendable = $("#appendable");
+        $(function(){
+            var table = $("#news_attachments");
+            var prototype = table.attr("data-prototype");
+            var tbody = table.find("tbody");
+            var row_count = tbody.length; 
 
-            if (typeof json_attachments !== 'undefined') {
-                var attachments = $.parseJSON(json_attachments),
-                    template = $("#_news_attachments_item_widget").html();
-                for (i in attachments) {
-                    var elem = template.replace(/__name__/g, i);
-                    elem = elem.replace(/_\|NAME\|_/g, attachments[i]['name']);
-                    elem = elem.replace(/_\|FILE\|_/g, attachments[i]['file']);
-                    elem = $.parseHTML(elem);
-                    appendable.append(elem);
-                    console.log(elem);
-                    attCount++;
-                }
-            }
-
-            $("#add_attachment").click(function(e){
+            $(table).on('click', '.js-row-add', function(e) {
                 e.preventDefault();
-                var elem = $.parseHTML(pattern.replace(/__name__/g, attCount));
-                appendable.append(elem);
-                attCount++;
+                var html = prototype.replace(/__name__/g, row_count);
+                var elem = $.parseHTML(html);
+                tbody.append(elem);
+                row_count++;
             });
 
-            $(document).on('click', ".attachment-remove", function(e){
+            $(table).on('click', '.js-row-remove', function(e) {
                 e.preventDefault();
-                $(this).parent().parent().remove();
+                $(this).closest('tr').remove();
             });
 
 
         });
     </script>
-    {% endif %}
 {% endblock %}
