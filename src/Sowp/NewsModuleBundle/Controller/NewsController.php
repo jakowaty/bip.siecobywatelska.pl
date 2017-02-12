@@ -72,7 +72,7 @@ class NewsController extends Controller
     /**
      * Finds and displays a news entity.
      *
-     * @Route("/{slug}", name="sowp_newsmodule_news_show")
+     * @Route("/{slug}/dupa", name="sowp_newsmodule_news_show")
      * @Method("GET")
      */
     public function showAction(News $news)

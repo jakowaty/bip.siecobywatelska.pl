@@ -39,8 +39,12 @@ class SearchTwigExtension extends \Twig_Extension
         ];
     }
 
-    public function renderSearchProvider()
+    public function renderSearchProvider(array $a)
     {
+        //list($entity, $link) = each($a);
+
+//        return "<h3><a href=\"$link\">  </a></h3>";
+//            #{#<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque repellat dolore iusto quos similique vel. Quia accusantium incidunt at dolorum, ipsum quo. Temporibus ad officia magnam nesciunt mollitia, quod porro?</p>#}
 
     }
 

@@ -32,15 +32,13 @@
     <div class="preview">
         <div class="container">
             <h1>Wynik wyszukiwania "{{ query }}"</h1>
-            <!-- -->
-            <h2>Artykuły</h2>
-            <h3><a href="">Lorem ipsum dolor sit amet.</a></h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque repellat dolore iusto quos similique vel. Quia accusantium incidunt at dolorum, ipsum quo. Temporibus ad officia magnam nesciunt mollitia, quod porro?</p>
-            <h3><a href="">Aliquam repudiandae ullam culpa voluptates.</a></h3>
-            <p>Ducimus voluptatem eos alias, nemo doloremque eaque fuga, a tenetur distinctio tempore enim quo, sint adipisci quam labore inventore maxime deleniti in consequuntur reiciendis. Temporibus facere porro recusandae soluta enim.</p>
-            <h3><a href="">Rerum unde incidunt, dolores a!</a></h3>
-            <p>Fuga voluptate ipsum reiciendis sapiente rem vitae necessitatibus, impedit quaerat incidunt accusantium, corporis cum illo aperiam saepe itaque omnis, doloremque animi non expedita consectetur. Dignissimos quam a illum, totam magnam?</p>
-            <a href="">Zobacz więcej dla typu "Artykuły"</a>
+            {% for key,result in results %}
+                <h2>{{ key }}</h2>
+                {% for item in result[key] %}
+                    {{ item|render_search_entry }}
+                {% endfor %}
+                <a href="">Zobacz więcej dla typu "{{ key }}"</a>
+            {% endfor %}
             <!-- -->
             {#
                 foreach (result)
