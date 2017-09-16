@@ -14,8 +14,5 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
-<<<<<<< HEAD
 /web/uploads/
-=======
-/web/uploads/
->>>>>>> jakowaty/Unit-tests_1
+
